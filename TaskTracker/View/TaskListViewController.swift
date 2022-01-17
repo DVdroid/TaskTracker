@@ -93,6 +93,7 @@ final class TaskListViewController: UIViewController {
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
         addSubViews()
+        
         observableTaskListDisplayItem.$tasklistDisplayItem.sink { [weak self] in
             self?.tasklistDisplayItem = $0
             self?.state = $0.tasks.count > 0 ? .hasTask : .noTaskFound
@@ -110,7 +111,7 @@ final class TaskListViewController: UIViewController {
     @objc func addTapped(_ sender: UIBarButtonItem) {
         let mainStoryBoard = UIStoryboard(name: "Main", bundle: .main)
         let addTaskVC = mainStoryBoard.instantiateViewController(identifier: "AddTaskViewController") { [unowned self] in
-            return AddTaskViewController(
+            AddTaskViewController(
                 coder: $0,
                 delegate: self
             )
@@ -153,7 +154,7 @@ extension TaskListViewController: UITableViewDelegate {
         let unwrappedTask = tasksArray[indexPath.row]
         let mainStoryBoard = UIStoryboard(name: "Main", bundle: .main)
         let taskDetailsVC = mainStoryBoard.instantiateViewController(identifier: "TaskDetailsViewController") { [unowned self] in
-            return TaskDetailsViewController(
+            TaskDetailsViewController(
                 coder: $0,
                 task: unwrappedTask,
                 delegate: self,

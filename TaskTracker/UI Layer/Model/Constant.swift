@@ -18,11 +18,11 @@ enum Constant {
     sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.
     """
     
-    static let tasks: [Task] =
-    [ Task(id: UUID().uuidString, title: "1", description: Constant.randomText, isComplete: false),
-      Task(id: UUID().uuidString, title: "2", description: Constant.randomText, isComplete: false),
-      Task(id: UUID().uuidString, title: "3", description: Constant.randomText, isComplete: false),
-      Task(id: UUID().uuidString, title: "4", description: Constant.randomText, isComplete: false)
+    static let tasks: [TaskModel] =
+    [ TaskModel(id: UUID(), title: "1", description: Constant.randomText, isComplete: false),
+      TaskModel(id: UUID(), title: "2", description: Constant.randomText, isComplete: false),
+      TaskModel(id: UUID(), title: "3", description: Constant.randomText, isComplete: false),
+      TaskModel(id: UUID(), title: "4", description: Constant.randomText, isComplete: false)
     ]
     
 }

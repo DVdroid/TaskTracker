@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 final public class ObservableTaskListDisplayItem: NSObject, ObservableObject {
     @Published var tasklistDisplayItem: TaskListDisplayItem = TaskListDisplayItem(with: [])

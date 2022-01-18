@@ -8,7 +8,7 @@
 import UIKit
 
 protocol TaskDetailsViewControllerDelegate: AnyObject {
-    func taskDetailsView(_ taskDetailsView: TaskDetailsViewController, didUpdateTask task: Task)
+    func taskDetailsView(_ taskDetailsView: TaskDetailsViewController, didUpdateTask task: TaskModel)
 }
 
 final class TaskDetailsViewController: UIViewController {
@@ -18,12 +18,12 @@ final class TaskDetailsViewController: UIViewController {
     private var doneBarButtonItem: UIBarButtonItem?
     
     weak var delegate: TaskDetailsViewControllerDelegate?
-    private var task: Task
-    private var updateTapAction: ((Task)->Void)?
+    private var task: TaskModel
+    private var updateTapAction: ((TaskModel)->Void)?
     required init?(coder: NSCoder,
-                   task: Task,
+                   task: TaskModel,
                    delegate: TaskDetailsViewControllerDelegate,
-                   updateTapAction: ((Task)->Void)?) {
+                   updateTapAction: ((TaskModel)->Void)?) {
         self.task = task
         self.delegate = delegate
         self.updateTapAction = updateTapAction

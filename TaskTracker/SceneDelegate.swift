@@ -10,21 +10,21 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
+    private var rootCoordinator: TaskListCoordinator!
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let scene = (scene as? UIWindowScene) else { return }
         
-        let mainStoryBoard = UIStoryboard(name: "Main", bundle: .main)
-        let rootViewController = mainStoryBoard.instantiateViewController(identifier: "TaskListViewController") {
-            let observableTaskListDisplayItem = ObservableTaskListDisplayItem()
-            return TaskListViewController(coder: $0, observableTaskListDisplayItem: observableTaskListDisplayItem)
-        }
+        let baseVC = UIViewController()
+        let rootViewControler = UINavigationController(rootViewController: baseVC)
+        rootCoordinator = TaskListCoordinator()
+        rootCoordinator.start(sourceVC: rootViewControler)
         
         window = UIWindow(windowScene: scene)
-        window?.rootViewController = UINavigationController(rootViewController: rootViewController)
+        window?.rootViewController = rootViewControler
         window?.makeKeyAndVisible()
     }
 
@@ -56,9 +56,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // to restore the scene back to its current state.
 
         // Save changes in the application's managed object context when the application transitions to the background.
-        (UIApplication.shared.delegate as? AppDelegate)?.saveContext()
+        rootCoordinator.saveContext()
     }
-
-
 }
 

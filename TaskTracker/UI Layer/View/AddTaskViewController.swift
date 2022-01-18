@@ -8,7 +8,7 @@
 import UIKit
 
 protocol AddTaskViewControllerDelegate: AnyObject {
-    func addTaskListView(_ addTaskListView: AddTaskViewController, didCreateNewTask task: Task?)
+    func addTaskListView(_ addTaskListView: AddTaskViewController, didCreateNewTask task: TaskModel?)
 }
 
 final class AddTaskViewController: UIViewController {
@@ -69,10 +69,10 @@ final class AddTaskViewController: UIViewController {
         } else if let unwrappedTitleText = self.titleTextField.text, unwrappedTitleText.isEmpty,
                   self.descriptionTextView.textColor != UIColor.lightGray {
             
-            let task = Task(id: UUID().uuidString,
-                            title: "New Task",
-                            description: self.descriptionTextView.text ?? "",
-                            isComplete: false)
+            let task = TaskModel(id: UUID(),
+                                 title: "New Task",
+                                 description: self.descriptionTextView.text ?? "",
+                                 isComplete: false)
             
             delegate?.addTaskListView(self, didCreateNewTask: task)
             dismiss(animated: true, completion: nil)
@@ -87,10 +87,10 @@ final class AddTaskViewController: UIViewController {
                   }
             
             let description = self.descriptionTextView.textColor != UIColor.lightGray ? self.descriptionTextView.text : nil
-            let task = Task(id: UUID().uuidString,
-                            title: unwrappedTitleText,
-                            description: description,
-                            isComplete: false)
+            let task = TaskModel(id: UUID(),
+                                 title: unwrappedTitleText,
+                                 description: description,
+                                 isComplete: false)
             
             delegate?.addTaskListView(self, didCreateNewTask: task)
             dismiss(animated: true, completion: nil)

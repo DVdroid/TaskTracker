@@ -8,12 +8,10 @@
 import UIKit
 import Combine
 
-
-
 final class TaskListViewController: UIViewController {
     
     private var tasklistDisplayItem: TaskListDisplayItem = TaskListDisplayItem(with: [])
-    private var observableTaskListDisplayItem: ObservableTaskListDisplayItem
+    var observableTaskListDisplayItem: ObservableTaskListDisplayItem
     required init?(coder: NSCoder, observableTaskListDisplayItem: ObservableTaskListDisplayItem) {
         self.observableTaskListDisplayItem = observableTaskListDisplayItem
         super.init(coder: coder)
@@ -27,7 +25,6 @@ final class TaskListViewController: UIViewController {
     private enum State {
         case noTaskFound
         case hasTask
-        case refresh
     }
     
     private var state: State = .noTaskFound {
@@ -37,8 +34,6 @@ final class TaskListViewController: UIViewController {
                 tableView.isHidden = true
             case .hasTask:
                 tableView.isHidden = false
-                tableView.reloadData()
-            case .refresh:
                 tableView.reloadData()
             }
         }
@@ -86,12 +81,14 @@ final class TaskListViewController: UIViewController {
     private func configureNavigationBar() {
         title = "Tasks"
         navigationController?.navigationBar.prefersLargeTitles = true
+        navigationItem.setHidesBackButton(true, animated: true)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addTapped))
+        
         addSubViews()
         
         observableTaskListDisplayItem.$tasklistDisplayItem.sink { [weak self] in
@@ -100,7 +97,6 @@ final class TaskListViewController: UIViewController {
         }.store(in: &cancellable)
         
         state = tasklistDisplayItem.tasks.count > 0 ? .hasTask : .noTaskFound
-        observableTaskListDisplayItem.tasklistDisplayItem = TaskListDisplayItem(with: Constant.tasks)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -123,6 +119,7 @@ final class TaskListViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         title = ""
+        navigationItem.setHidesBackButton(false, animated: false)
     }
 }
 
@@ -138,8 +135,13 @@ extension TaskListViewController: UITableViewDataSource {
             return UITableViewCell()
         }
         
-        cell.title.text = tasklistDisplayItem.tasks[indexPath.row].title
-        cell.checkBoxButton.isChecked = tasklistDisplayItem.tasks[indexPath.row].isComplete
+        let task = tasklistDisplayItem.tasks[indexPath.row]
+        cell.title.text = task.title
+        cell.checkBoxButton.isChecked = task.isComplete
+        
+        cell.checkBoxButton.checkBoxTapAction = { [weak self] isChecked in
+            self?.tasklistDisplayItem.checkBoxTapAction?(isChecked, task)
+        }
         cell.accessoryType = .disclosureIndicator
         return cell
     }
@@ -169,15 +171,11 @@ extension TaskListViewController: UITableViewDelegate {
         
         if editingStyle == .delete {
             tableView.beginUpdates()
+            
             tableView.deleteRows(at: [indexPath], with: .automatic)
-            
             let deletedTask = tasklistDisplayItem.tasks[indexPath.row]
-            var existingTasks = tasklistDisplayItem.tasks
-            if let matchingIndex = existingTasks.firstIndex(where: { $0.id == deletedTask.id }) {
-                existingTasks.remove(at: matchingIndex)
-            }
+            tasklistDisplayItem.removeTapAction?(deletedTask)
             
-            observableTaskListDisplayItem.tasklistDisplayItem = TaskListDisplayItem(with: existingTasks)
             tableView.endUpdates()
         }
     }
@@ -185,23 +183,15 @@ extension TaskListViewController: UITableViewDelegate {
 
 extension TaskListViewController: AddTaskViewControllerDelegate {
     
-    func addTaskListView(_ addTaskListView: AddTaskViewController, didCreateNewTask task: Task?) {
+    func addTaskListView(_ addTaskListView: AddTaskViewController, didCreateNewTask task: TaskModel?) {
         guard let unwrappedTask = task else { return }
-        tasklistDisplayItem.saveTapAction?(unwrappedTask)
-        var tasks = tasklistDisplayItem.tasks
-        tasks.append(unwrappedTask)
-        observableTaskListDisplayItem.tasklistDisplayItem = TaskListDisplayItem(with: tasks)
+        tasklistDisplayItem.createTapAction?(unwrappedTask)
     }
 }
 
 extension TaskListViewController: TaskDetailsViewControllerDelegate {
     
-    func taskDetailsView(_ taskDetailsView: TaskDetailsViewController, didUpdateTask task: Task) {
+    func taskDetailsView(_ taskDetailsView: TaskDetailsViewController, didUpdateTask task: TaskModel) {
         tasklistDisplayItem.updateTapAction?(task)
-        var existingTasks = tasklistDisplayItem.tasks
-        if let matchingIndex = existingTasks.firstIndex(where: { $0.id == task.id }) {
-            existingTasks[matchingIndex] = task
-        }
-        observableTaskListDisplayItem.tasklistDisplayItem = TaskListDisplayItem(with: existingTasks)
     }
 }

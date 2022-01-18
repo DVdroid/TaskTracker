@@ -10,8 +10,8 @@ import UIKit
 final class CheckBoxButton: UIButton {
     
     // Images
-    let checkedImage = UIImage(named: Constant.checkedImageName)! as UIImage
-    let uncheckedImage = UIImage(named: Constant.uncheckedImageName)! as UIImage
+    private let checkedImage = UIImage(named: Constant.checkedImageName)! as UIImage
+    private let uncheckedImage = UIImage(named: Constant.uncheckedImageName)! as UIImage
     
     // Bool property
     var isChecked: Bool = false {
@@ -19,6 +19,8 @@ final class CheckBoxButton: UIButton {
             self.setImage(isChecked ? checkedImage : uncheckedImage, for: .normal)
         }
     }
+    
+    var checkBoxTapAction:((Bool)->Void)? = nil
     
     override func awakeFromNib() {
         backgroundColor = UIColor.clear
@@ -29,6 +31,7 @@ final class CheckBoxButton: UIButton {
     @objc private func buttonTapped(sender: UIButton) {
         if sender == self {
             isChecked.toggle()
+            checkBoxTapAction?(isChecked)
         }
     }
 }

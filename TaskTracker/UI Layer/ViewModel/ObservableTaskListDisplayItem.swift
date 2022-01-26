@@ -7,10 +7,10 @@
 
 import Foundation
 
-final public class ObservableTaskListDisplayItem: NSObject, ObservableObject {
+final class ObservableTaskListDisplayItem: NSObject, ObservableObject {
     @Published var tasklistDisplayItem: TaskListDisplayItem = TaskListDisplayItem(with: [])
     
-    override public init() {
+    override init() {
         super.init()
     }
 }

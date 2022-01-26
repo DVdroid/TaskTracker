@@ -7,8 +7,8 @@
 
 import Foundation
 
-public struct TaskModel: Identifiable, Hashable {
-    public let id: UUID
+struct TaskModel: Identifiable, Hashable {
+    let id: UUID
     let title: String
     var description: String? = nil
     var isComplete: Bool = false

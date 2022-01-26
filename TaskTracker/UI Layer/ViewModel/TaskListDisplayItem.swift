@@ -7,7 +7,7 @@
 
 import Foundation
 
-final public class TaskListDisplayItem: NSObject {
+final class TaskListDisplayItem: NSObject {
     
     let tasks: [TaskModel]
     var createTapAction:((TaskModel)->Void)?
